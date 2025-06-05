@@ -12,7 +12,7 @@ rcParams['font.size'] = 10
 
 # Set page config with custom icon
 st.set_page_config(
-    page_title="Stroke Diagnosis",
+    page_title="Risk Prediction for Cerebral Infarction",
     page_icon="🧠",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -31,11 +31,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Title and introduction
-st.title("🧠 Risk prediction for Stroke")
-st.markdown("""
-    本工具使用miRNA表达数据来预测脑卒中风险，并通过SHAP可视化提供机制解释。
-    在侧边栏调整miRNA表达水平，探索它们对疾病进展和诊断标志物的影响。
-""")
+st.title("🧠 Risk Prediction for Cerebral Infarction")
 
 # Load and prepare background data
 @st.cache_data
@@ -73,8 +69,6 @@ cut_off = 0.1346
 
 # Sidebar configuration
 st.sidebar.header("🧬 miRNA Expression Inputs")
-st.sidebar.markdown("Adjust expression levels of stroke-related miRNAs:")
-
 # Reset button
 if st.sidebar.button("Reset to Defaults", key="reset"):
     st.session_state.update(default_values)
@@ -107,7 +101,7 @@ if st.button("🧠 Analyze miRNA Impacts", key="calculate"):
     # Prediction
     prediction = model.predict(input_df.values, verbose=0)[0][0]
     st.header("📈 Diagnostic Prediction")    
-    st.metric("Stroke Probability", f"{prediction:.4f}", 
+    st.metric("Probability", f"{prediction:.4f}", 
              delta="Positive" if prediction >= cut_off else "Negative",
              delta_color="inverse")
     
@@ -129,9 +123,6 @@ if st.button("🧠 Analyze miRNA Impacts", key="calculate"):
     
     with tab2:
         st.subheader("Mechanistic Insights")
-        st.markdown("""
-        **Key Stroke-related Pathways:**
-        """)
         importance_df = pd.DataFrame({'miRNA': input_df.columns, 'SHAP Value': shap_values})
         importance_df = importance_df.sort_values('SHAP Value', ascending=False)
         st.dataframe(importance_df.style.background_gradient(cmap='coolwarm', subset=['SHAP Value']))
